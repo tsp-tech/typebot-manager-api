@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model EvolutionInstance {
+  name         String            @id
+  bots         Bot[]
+  inboxes      ChatwootInbox[]
+}
+
+model ChatwootInbox {
+  inboxId      Int               @id
+  name         String
+  sessions     TypebotSession[]
+  instance     EvolutionInstance @relation(fields: [instanceName], references: [name])
+  instanceName String
+}
+
+model Bot {
+  id           String            @id
+  name         String
+  sessions     TypebotSession[]
+  instance     EvolutionInstance @relation(fields: [instanceName], references: [name])
+  instanceName String
+}
+
+model TypebotSession {
+  id           Int               @id @default(autoincrement())
+  bot          Bot               @relation(fields: [botId], references: [id])
+  botId        String
+  remoteJid    String            @unique
+  instanceName String
+  inbox        ChatwootInbox     @relation(fields: [inboxId], references: [inboxId])
+  inboxId      Int
+}
