@@ -2,7 +2,13 @@ import dayjs from 'dayjs';
 import { appendFile } from 'fs';
 import { Handler } from 'express';
 
-import { LOGGING_DRIVERS, LOG_FILE, LOG_FILE_OPTIONS, LOG_PREFFIX } from './contants';
+import {
+  ALLOW_EXTRA_WHITE_SPACE_FOR_READABILITY,
+  LOGGING_DRIVERS,
+  LOG_FILE,
+  LOG_FILE_OPTIONS,
+  LOG_PREFFIX,
+} from './contants';
 
 const getTimeStamp = () => dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss Z');
 
@@ -23,7 +29,7 @@ export function log(
   drivers = LOGGING_DRIVERS,
 ) {
   try {
-    const text = `${LOG_PREFFIX} [${tag.toUpperCase().slice(0, 3)}]: ${String(msg)} [${getTimeStamp()}] ${separateFromNext ? '\n\n\n' : ''}`;
+    const text = `[${getTimeStamp()}] ${LOG_PREFFIX} [${tag.toUpperCase().slice(0, 3)}]: ${String(msg)} ${ALLOW_EXTRA_WHITE_SPACE_FOR_READABILITY && separateFromNext ? '\n\n\n' : ''}`;
 
     if (drivers.includes('console')) {
       console[severity]?.(text);
